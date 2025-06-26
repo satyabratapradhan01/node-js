@@ -7,9 +7,12 @@ const userRouter = express.Router();
 
 // local module 
 const rootDir = require('../util/pathUtil');
+const { registereHomes } = require('./hostRouter');
+
 
 userRouter.get("/", (req, res, next) => {
-  res.sendFile(path.join(rootDir, 'views', 'home.html')); 
+  console.log(registereHomes)
+  res.render('home', {registereHomes});
 });
 
 module.exports = userRouter;

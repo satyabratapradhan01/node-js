@@ -12,9 +12,14 @@ hostRouter.get("/add-home", (req, res, next) => {
  res.sendFile(path.join(rootDir, 'views', 'add-home.html'));
 });
 
+const registereHomes = [];
+
 hostRouter.post("/add-home", (req, res, next) => {
-  console.log(req.body);
+  console.log(req.body.houseName);
+  registereHomes.push({ houseName: req.body.houseName }); 
+
   res.sendFile(path.join(rootDir, 'views', 'homeAdded.html'));
 });
 
-module.exports = hostRouter;
+exports.hostRouter = hostRouter;
+exports.registereHomes = registereHomes;

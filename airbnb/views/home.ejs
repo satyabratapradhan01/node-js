@@ -8,7 +8,14 @@
 </head>
 
 <body>
-    <h1>Welcom to airbnb</h1>
+   <h2>Here are our Registered homes: </h2>
+   <ul>
+   <% registereHomes.forEach(home => { %>
+    <li>
+        <%= home.houseName %>
+    </li>
+   <% }) %>
+   </ul>
     <a href="/host/add-home">Add Home</a>
 </body>
 
