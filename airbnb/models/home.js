@@ -1,4 +1,11 @@
- const registereHomes = [];
+// core module
+const fs = require('fs');
+const path = require('path');
+const rootDir = require('../util/pathUtil');
+const { error } = require('console');
+
+// fake database
+const registereHomes = [];
 
 module.exports = class Home {
     constructor(houseName, price, location, rating, image){
@@ -12,6 +19,10 @@ module.exports = class Home {
 
     save(){
         registereHomes.push(this);
+        const homeDataPath = path.join(rootDir, 'data', 'homes.json');
+        fs.writeFile(homeDataPath, JSON.stringify(registereHomes), error => {
+            console.log("File Writing Concluded", error);
+        })
     }
 
     static fetchAll() {
