@@ -7,12 +7,9 @@ const userRouter = express.Router();
 
 // local module 
 const rootDir = require('../util/pathUtil');
-const { registereHomes } = require('./hostRouter');
+const { getHome } = require('../controllers/homes');
 
 
-userRouter.get("/", (req, res, next) => {
-  console.log(registereHomes)
-  res.render('home', {registereHomes});
-});
+userRouter.get("/", getHome);
 
 module.exports = userRouter;
