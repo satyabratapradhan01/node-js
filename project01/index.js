@@ -1,59 +1,68 @@
-const express = require('express');
-const fs = require('fs');
-let users = require('./MOCK_DATA.json');
-const { stringify } = require('querystring');
+const express = require("express");
+const fs = require("fs");
+let users = require("./MOCK_DATA.json");
+const { stringify } = require("querystring");
 
 const app = express();
 const port = 8080;
 
 app.use(express.urlencoded({ extended: false }));
 
-
-app.get('/', (req, res) => {
-    res.send('home page')
+app.get("/", (req, res) => {
+  res.send("home page");
 });
 
 app.get("/users", (req, res) => {
-    const html = `
+  const html = `
     <ul>
-    ${users.map((user) => 
+    ${users.map(
+      (user) =>
         `<li>${user.first_name}, <br> ${user.last_name}, <br> ${user.email}</li>`
     )}
-    <ul>`
-    res.send(html)
-})
-
-app.get('/api/users', (req, res) =>{
-    res.json(users);
+    <ul>`;
+  res.send(html);
 });
 
-app.get('/api/users/:id', (req, res) => {
-    const id = Number(req.params.id);
-    const user = users.find(user => user.id === id);
-    res.json(user)
-})
+app.get("/api/users", (req, res) => {
+  res.json(users);
+});
 
-app.post('/api/users', (req, res) => {
-    const body = req.body;
-    users.push({...body, id: users.length + 1})
-    fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) => {
-        res.json({ status: 'SUCCESS', id: users.length + 1});
-    })
-})
+app.get("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const user = users.find((user) => user.id === id);
+  res.json(user);
+});
 
-app.patch('/api/users/:id', (req, res) => {
-    res.json({ status: 'Pending'})
-})
+app.post("/api/users", (req, res) => {
+  const body = req.body;
+  users.push({ ...body, id: users.length + 1 });
+  fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+    res.json({ status: "SUCCESS", id: users.length + 1 });
+  });
+});
 
-app.delete('/api/users/:id', (req, res) => {
-   const id = Number(req.params.id); 
-    users = users.filter(user => user.id !== id);
-    console.log(users);
-   fs.writeFile('./MOCK_DATA.json', JSON.stringify(users), (err, data) =>{
-    res.json({ status: 'success delete'})
-   })
-})
+app.patch("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  let user = users.find((user) => user.id === id);
 
-app.listen(port, ()=>{
-    console.log(`server is listing port no. ${port}`)
-})
+//   console.log(user);
+
+  Object.assign(user, req.body);
+
+  fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+    res.json({ status: "success update" });
+  });
+});
+
+app.delete("/api/users/:id", (req, res) => {
+  const id = Number(req.params.id);
+  users = users.filter((user) => user.id !== id);
+  console.log(users);
+  fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
+    res.json({ status: "success delete" });
+  });
+});
+
+app.listen(port, () => {
+  console.log(`server is listing port no. ${port}`);
+});
