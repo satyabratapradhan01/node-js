@@ -8,6 +8,15 @@ const port = 8080;
 
 app.use(express.urlencoded({ extended: false }));
 
+app.use((req, res, next)=> {
+    // console.log("Hello from middleware 1");
+    // res.json({ msg: "Hello from middleware 1"});
+    fs.appendFile('test.txt', `${Date.now()}: ${req.method}: ${req.path}`, (err) => {
+        
+    });
+    next();
+})
+
 app.get("/", (req, res) => {
   res.send("home page");
 });
