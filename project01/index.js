@@ -1,8 +1,10 @@
 const express = require("express");
 const fs = require("fs");
 let users = require("./MOCK_DATA.json");
-const { stringify } = require("querystring");
+const mongoose = require('mongoose');
 
+const { stringify } = require("querystring");
+const { type } = require("os");
 const app = express();
 const port = 8080;
 
@@ -17,37 +19,87 @@ app.use((req, res, next)=> {
     next();
 })
 
+//Connection
+mongoose
+ .connect("mongodb://127.0.0.1:27017/satya")
+ .then(()=> console.log("MongoDB Connected"))
+ .catch((err) => console.log("Mongo Error", err))
+
+
+//Schema
+const userSchema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    require: true,
+  },
+  lastName: {
+    type: String,
+    require: true,
+  },
+  email: {
+    type : String,
+    require: true,
+    unique: true,
+  },
+  jobTitle: {
+    type: String,
+  },
+  gender: {
+    type: String,
+  }
+}, {timestamps: true});
+
+const User = mongoose.model("user", userSchema);
+
 app.get("/", (req, res) => {
   res.send("home page");
 });
 
-app.get("/users", (req, res) => {
+app.get("/users", async(req, res) => {
+  const users = await User.find({})
   const html = `
     <ul>
     ${users.map(
       (user) =>
-        `<li>${user.first_name}, <br> ${user.last_name}, <br> ${user.email}</li>`
+        `<li>${user.firstName}, <br> ${user.lastName}, <br> ${user.email}</li>`
     )}
     <ul>`;
   res.send(html);
 });
 
-app.get("/api/users", (req, res) => {
-  res.json(users);
-});
-
-app.get("/api/users/:id", (req, res) => {
-  const id = Number(req.params.id);
-  const user = users.find((user) => user.id === id);
+app.get("/api/users", async(req, res) => {
+  const user = await User.find({})
   res.json(user);
 });
 
-app.post("/api/users", (req, res) => {
+app.get("/api/users/:id", async(req, res) => {
+  const id = req.params.id;
+  // const user = users.find((user) => user.id === id);
+  const user = await User.findById(id)
+  if(!user){
+    res.status(400).json({error: "user not found"})
+  }
+  res.json(user);
+});
+
+app.post("/api/users", async(req, res) => {
   const body = req.body;
-  users.push({ ...body, id: users.length + 1 });
-  fs.writeFile("./MOCK_DATA.json", JSON.stringify(users), (err, data) => {
-    res.json({ status: "SUCCESS", id: users.length + 1 });
+  if(!body || !body.first_name || !body.last_name || !body.email 
+    || !body.gender || !body.job_title ){
+    res.status(400).json({error: "add every value"});
+  }
+  
+  const result = await User.create({
+    firstName: body.first_name,
+    lastName: body.last_name,
+    email: body.email,
+    gender: body.gender,
+    jobTitle: body.job_title
   });
+
+  console.log(result);
+
+  res.status(201).json({msg : 'success'})
 });
 
 app.patch("/api/users/:id", (req, res) => {
