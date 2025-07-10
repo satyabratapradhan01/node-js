@@ -9,14 +9,12 @@ require('dotenv').config();
 const app = express();
 const port = process.env.port || 3030;
 
-const static = path.join(__dirname, "public", );
-app.use("/public",express.static(static))
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.urlencoded({extended : true}))
 
-
-const __dirname = path.dirname(__filename);
-const homePagePath = path.join(require.main.filename)
-console.log(import.meta.dirname);
-
+app.get("/", (req, res) => {
+    res.send("Hello Satya....")
+})
 
 app.get("/public/:username", (req, res) => {
     console.log(req.params);
@@ -32,6 +30,13 @@ app.get("/about", (req, res) => {
     console.log(req.query)
     res.send("Helo About Page!");
 });
+
+app.post("/contact", (req, res) => {
+    // res.redirect("index.html");
+    console.log(req.body);
+    // console.log(__filename)
+    res.redirect("/");
+})
 
 app.listen(port, () => {
     console.log(`App is listening at http://localhost:${port}`);

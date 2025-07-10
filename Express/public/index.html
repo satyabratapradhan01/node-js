@@ -7,27 +7,17 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <div class="logo">MySite</div>
-    <nav id="nav-menu">
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Contact</a>
-    </nav>
-    <div class="menu-icon" onclick="toggleMenu()">☰</div>
-  </header>
-
-  <section class="hero">
-    <h1>Welcome to My Website</h1>
-    <p>This is a simple responsive template using HTML, CSS, and JavaScript.</p>
-    <button onclick="alert('Get Started Clicked')">Get Started</button>
-  </section>
-
-  <footer>
-    <p>&copy; 2025 MySite. All rights reserved.</p>
-  </footer>
-
-  <script src="index.js"></script>
+ <h1>Home Page</h1>
+ <form action="/contact" method="post">
+  <div>
+    <label for="name">Name</label>
+    <input type="text" name="name" id="name" placeholder="enter a userName">
+  </div>
+  <div>
+    <label for="message">Message</label>
+    <input type="text" name="message" id="message" placeholder="write your message here">
+  </div>
+  <button type="submit">Submit</button>
+ </form>
 </body>
 </html>
