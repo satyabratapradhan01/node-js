@@ -1,12 +1,18 @@
 const express = require("express");
+const path = require('path');
 const connectToMongoDB = require("./connect");
 const app = express();
 
-const router = require('./routes/user')
+const router = require('./routes/user');
+const staticRouter = require('./routes/staticRouter');
 const url = require('./models/url');
 const port = 8080;
 
-app.use(express.json())
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, 'views'));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }))
 
 // connection
 connectToMongoDB("mongodb://127.0.0.1:27017/Short_Url")
@@ -14,19 +20,21 @@ connectToMongoDB("mongodb://127.0.0.1:27017/Short_Url")
   .catch((err) => console.error("MongoDB connection error:", err));
 
 
-app.get("/", (req, res) => {
-  res.send("Hello Satya.....");
+app.get("/home", (req, res) => {
+  res.render('home.ejs')
 });
 
 // route
+app.use('/', staticRouter)
 app.use('/url', router);
+
 
 app.get('/:shortId', async (req, res) => {
   const shortId = req.params.shortId;
 
   try {
     const entry = await url.findOneAndUpdate(
-      { shortId: shortId },  // search by shortId, not _id
+      { shortId: shortId },  
       {
         $push: {
           visitHistory: {
@@ -34,7 +42,7 @@ app.get('/:shortId', async (req, res) => {
           },
         },
       },
-      { new: true }  // return updated document
+      { new: true }  
     );
 
     if (!entry) {
