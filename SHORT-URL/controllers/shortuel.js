@@ -14,10 +14,11 @@ async function handleGenerateNewShortUrl(req, res) {
     await URL.create({
         shortId: shortID,
         redirectURL: body.url,
-        visitHistory: []
+        visitHistory: [],
+        createdBy: req.user._id,
     });
 
-    res.render('home', { id: shortID })
+    res.render('home', { id: shortID });
 }
 async function handleGetAnalytics(req, res) {
     const shortId = req.params.shortId;
