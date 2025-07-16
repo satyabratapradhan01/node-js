@@ -5,6 +5,8 @@ const app = express();
 
 const router = require('./routes/user');
 const staticRouter = require('./routes/staticRouter');
+const userRouter = require('./routes/theUser');
+
 const url = require('./models/url');
 const port = 8080;
 
@@ -25,8 +27,10 @@ app.get("/home", (req, res) => {
 });
 
 // route
-app.use('/', staticRouter)
-app.use('/url', router);
+app.use('/', staticRouter);
+app.use('/user', userRouter);
+app.use('/api/url', router);
+
 
 
 app.get('/:shortId', async (req, res) => {
